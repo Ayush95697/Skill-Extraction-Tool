@@ -50,7 +50,8 @@ function App() {
 
     try {
       await axios.post(
-        "http://localhost:5000/extract-skills",
+        "https://YOUR-BACKEND-RENDER-URL.onrender.com/extract-skills"
+
         formData,
         { headers: { "Content-Type": "multipart/form-data" } }
       );
