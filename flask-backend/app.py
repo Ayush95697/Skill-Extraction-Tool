@@ -65,13 +65,21 @@ def extract_text_from_pdf(file_stream):
 def extract_links(text):
     linkedin = None
     github = None
-    linkedin_match = re.search(r'https?://(?:[a-z]+\.)?linkedin\.com/[^\s,;)\]]+', text, re.IGNORECASE)
-    github_match = re.search(r'https?://(?:[a-z]+\.)?github\.com/[^\s,;)\]]+', text, re.IGNORECASE)
-    if linkedin_match:
-        linkedin = linkedin_match.group(0).strip().rstrip('.,;)')
-    if github_match:
-        github = github_match.group(0).strip().rstrip('.,;)')
+
+    # Find all URLs in the text
+    url_pattern = re.compile(r'https?://[^\s,;)\]<>"]+', re.IGNORECASE)
+    urls = url_pattern.findall(text)
+
+    for url in urls:
+        clean_url = url.strip().rstrip('.,;)')
+        if not linkedin and "linkedin.com" in clean_url.lower():
+            linkedin = clean_url
+        if not github and "github.com" in clean_url.lower():
+            github = clean_url
+        if linkedin and github:
+            break
     return linkedin, github
+
 
 def extract_email(text):
     match = re.search(r'[\w\.-]+@[\w\.-]+\.\w+', text)
