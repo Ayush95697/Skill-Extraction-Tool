@@ -66,12 +66,12 @@ def extract_links(text):
     linkedin = None
     github = None
 
-    # Find all URLs in the text
-    url_pattern = re.compile(r'https?://[^\s,;)\]<>"]+', re.IGNORECASE)
+    # Find all URLs, even with leading slash
+    url_pattern = re.compile(r'/?https?://[^\s,;)\]<>"]+', re.IGNORECASE)
     urls = url_pattern.findall(text)
 
     for url in urls:
-        clean_url = url.strip().rstrip('.,;)')
+        clean_url = url.lstrip('/').strip().rstrip('.,;)')
         if not linkedin and "linkedin.com" in clean_url.lower():
             linkedin = clean_url
         if not github and "github.com" in clean_url.lower():
@@ -79,7 +79,6 @@ def extract_links(text):
         if linkedin and github:
             break
     return linkedin, github
-
 
 def extract_email(text):
     match = re.search(r'[\w\.-]+@[\w\.-]+\.\w+', text)
