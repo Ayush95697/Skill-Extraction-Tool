@@ -1,113 +1,105 @@
-import { useState, useEffect } from 'react';
-import { CheckCircle, Info, AlertTriangle, FileText, X, UploadCloud, Loader } from 'lucide-react';
+body {
+  background: linear-gradient(120deg, #f0f4fd 0%, #e0ecff 100%);
+  min-height: 100vh;
+  margin: 0;
+  padding: 0;
+}
 
-export default function ResumeChecker() {
-  const [resume, setResume] = useState('');
-  const [jobDescription, setJobDescription] = useState('');
-  const [isAnalyzing, setIsAnalyzing] = useState(false);
-  const [results, setResults] = useState(null);
-  const [dragActive, setDragActive] = useState(false);
-  const [fileUploaded, setFileUploaded] = useState(false);
-  const [fileName, setFileName] = useState('');
-  
-  // Sample analysis logic (replace with actual implementation)
-  const analyzeResume = () => {
-    if (!resume || !jobDescription) return;
-    
-    setIsAnalyzing(true);
-    
-    // Simulate API call with timeout
-    setTimeout(() => {
-      // Sample results
-      const extractedSkills = extractSkills(resume);
-      const jdSkills = extractSkills(jobDescription);
-      
-      const matchingSkills = extractedSkills.filter(skill => 
-        jdSkills.some(jdSkill => jdSkill.toLowerCase() === skill.toLowerCase())
-      );
-      
-      const missingSkills = jdSkills.filter(skill => 
-        !extractedSkills.some(resumeSkill => resumeSkill.toLowerCase() === skill.toLowerCase())
-      );
-      
-      setResults({
-        matchRate: Math.round((matchingSkills.length / jdSkills.length) * 100),
-        extractedSkills,
-        matchingSkills,
-        missingSkills,
-        recommendations: generateRecommendations(matchingSkills, missingSkills)
-      });
-      
-      setIsAnalyzing(false);
-    }, 2000);
-  };
-  
-  // Simple skill extraction function
-  const extractSkills = (text) => {
-    // This is a simplified version. In a real application, you would use NLP or a more sophisticated algorithm
-    const commonSkills = [
-      'JavaScript', 'React', 'Node.js', 'Python', 'Java', 'C++', 'SQL',
-      'Machine Learning', 'Data Analysis', 'AWS', 'Azure', 'Docker', 'Kubernetes',
-      'Communication', 'Leadership', 'Project Management', 'Agile', 'Scrum',
-      'Problem Solving', 'Critical Thinking', 'Teamwork', 'Collaboration'
-    ];
-    
-    return commonSkills.filter(skill => 
-      text.toLowerCase().includes(skill.toLowerCase())
-    );
-  };
-  
-  // Generate recommendations based on skills
-  const generateRecommendations = (matching, missing) => {
-    const recommendations = [];
-    
-    if (matching.length / (matching.length + missing.length) < 0.5) {
-      recommendations.push('Your resume matches less than 50% of required skills. Consider addressing the missing skills.');
-    }
-    
-    if (missing.length > 0) {
-      recommendations.push(`Add these key skills to your resume: ${missing.join(', ')}`);
-    }
-    
-    if (matching.length < 3) {
-      recommendations.push('Enhance your resume with more relevant skills from the job description.');
-    }
-    
-    return recommendations.length > 0 ? recommendations : ['Your resume is well-aligned with the job requirements!'];
-  };
-  
-  // Handle file upload
-  const handleFileUpload = async (file) => {
-    try {
-      const text = await readFileAsText(file);
-      setResume(text);
-      setFileUploaded(true);
-      setFileName(file.name);
-    } catch (error) {
-      console.error('Error reading file:', error);
-      alert('Error reading file. Please try again.');
-    }
-  };
-  
-  // Read file as text
-  const readFileAsText = (file) => {
-    return new Promise((resolve, reject) => {
-      const reader = new FileReader();
-      reader.onload = (event) => resolve(event.target.result);
-      reader.onerror = (error) => reject(error);
-      reader.readAsText(file);
-    });
-  };
-  
-  // Handle drag events
-  const handleDrag = (e) => {
-    e.preventDefault();
-    e.stopPropagation();
-    
-    if (e.type === 'dragenter' || e.type === 'dragover') {
-      setDragActive(true);
-    } else if (e.type === 'dragleave') {
-      setDragActive(false);
-    }
-  };
-  
+.resume-checker-container {
+  max-width: 480px;
+  margin: 3rem auto;
+  padding: 2rem 1.5rem;
+  background: #fff;
+  border-radius: 18px;
+  box-shadow: 0 8px 32px rgba(44,62,80,0.12);
+  text-align: center;
+  font-family: 'Segoe UI', Arial, sans-serif;
+}
+
+.subtitle {
+  color: #555;
+  margin-bottom: 1.5rem;
+}
+
+.domain-select {
+  margin-bottom: 1.5rem;
+}
+
+.domain-select select {
+  padding: 0.7rem 1.2rem;
+  border-radius: 25px;
+  border: 1.5px solid #3c8ce7;
+  font-size: 1rem;
+  background: #f7fbff;
+  color: #234567;
+  transition: border 0.2s;
+}
+
+.domain-select select:focus {
+  border: 2px solid #00eaff;
+  outline: none;
+}
+
+.dropzone {
+  border: 2px dashed #3c8ce7;
+  border-radius: 14px;
+  padding: 2.5rem 1rem;
+  margin-bottom: 1.5rem;
+  cursor: pointer;
+  transition: border-color 0.2s;
+  color: #234567;
+  background: #f7fbff;
+}
+.dropzone.active {
+  border-color: #00eaff;
+  background: #e0f7fa;
+}
+.selected-file-name {
+  font-weight: 600;
+  color: #234567;
+}
+.upload-btn {
+  background: linear-gradient(90deg, #3c8ce7 0%, #00eaff 100%);
+  color: #fff;
+  border: none;
+  border-radius: 30px;
+  font-size: 1.1rem;
+  font-weight: 600;
+  padding: 0.8rem 2.2rem;
+  margin-top: 1rem;
+  cursor: pointer;
+  transition: background 0.2s, transform 0.2s;
+}
+.upload-btn:disabled {
+  background: #b3e0ff;
+  cursor: not-allowed;
+}
+.results-panel {
+  margin-top: 2rem;
+  padding: 1.2rem;
+  background: #f7fbff;
+  border-radius: 10px;
+  text-align: left;
+}
+.spinner {
+  margin: 1rem auto;
+  border: 4px solid #eaf6ff;
+  border-top: 4px solid #3c8ce7;
+  border-radius: 50%;
+  width: 36px;
+  height: 36px;
+  animation: spin 0.8s linear infinite;
+}
+@keyframes spin {
+  0% { transform: rotate(0deg);}
+  100% { transform: rotate(360deg);}
+}
+.error {
+  color: #e74c3c;
+  font-weight: bold;
+  margin-top: 1rem;
+}
+ul {
+  margin: 0.5rem 0 0 1.2rem;
+  padding: 0;
+}
