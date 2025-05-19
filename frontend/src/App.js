@@ -50,11 +50,10 @@ function App() {
 
     try {
       await axios.post(
-  "https://YOUR-BACKEND-RENDER-URL.onrender.com/extract-skills",
-  formData,
-  { headers: { "Content-Type": "multipart/form-data" } }
-);
-
+        "https://skill-extraction-tool.onrender.com/extract-skills",
+        formData,
+        { headers: { "Content-Type": "multipart/form-data" } }
+      );
       setFileUploaded(true);
     } catch (err) {
       alert("Error uploading file!");
@@ -74,7 +73,7 @@ function App() {
     setLoading(true);
     try {
       const res = await axios.post(
-        "http://localhost:5000/extract-skills",
+        "https://skill-extraction-tool.onrender.com/extract-skills",
         formData,
         { headers: { "Content-Type": "multipart/form-data" } }
       );
