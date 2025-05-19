@@ -10,7 +10,7 @@ const DOMAIN_OPTIONS = [
   "Mobile Developer"
 ];
 
-function ResumeChecker() {
+function App() {
   const [file, setFile] = useState(null);
   const [dragActive, setDragActive] = useState(false);
   const [loading, setLoading] = useState(false);
@@ -163,4 +163,4 @@ function ResumeChecker() {
   );
 }
 
-export default ResumeChecker;
+export default App;
