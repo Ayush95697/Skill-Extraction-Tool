@@ -1,4 +1,3 @@
-// src/App.js
 import React, { useState } from "react";
 import axios from "axios";
 import "./App.css";
@@ -22,6 +21,9 @@ function App() {
   const [categorizedSkills, setCategorizedSkills] = useState({});
   const [linkedin, setLinkedin] = useState(null);
   const [github, setGithub] = useState(null);
+  const [email, setEmail] = useState(null);
+  const [phone, setPhone] = useState(null);
+  const [name, setName] = useState(null);
 
   const handleFileChange = (e) => {
     setFile(e.target.files[0]);
@@ -33,6 +35,9 @@ function App() {
     setCategorizedSkills({});
     setLinkedin(null);
     setGithub(null);
+    setEmail(null);
+    setPhone(null);
+    setName(null);
   };
 
   const handleUpload = async () => {
@@ -45,6 +50,9 @@ function App() {
     setCategorizedSkills({});
     setLinkedin(null);
     setGithub(null);
+    setEmail(null);
+    setPhone(null);
+    setName(null);
 
     const formData = new FormData();
     formData.append("resume", file);
@@ -84,6 +92,9 @@ function App() {
       setCategorizedSkills(res.data.categorized_skills);
       setLinkedin(res.data.linkedin);
       setGithub(res.data.github);
+      setEmail(res.data.email);
+      setPhone(res.data.phone);
+      setName(res.data.name);
     } catch (err) {
       alert("Error extracting skills!");
     }
@@ -156,6 +167,14 @@ function App() {
         </div>
       )}
       <div className="results-section">
+        {(name || email || phone) && (
+          <div className="candidate-details">
+            <h3>Candidate Details</h3>
+            {name && <div><strong>Name:</strong> {name}</div>}
+            {email && <div><strong>Email:</strong> {email}</div>}
+            {phone && <div><strong>Phone:</strong> {phone}</div>}
+          </div>
+        )}
         {(linkedin || github) && (
           <div className="profile-links">
             {linkedin && (
