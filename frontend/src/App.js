@@ -1,3 +1,4 @@
+// src/App.js
 import React, { useState } from "react";
 import axios from "axios";
 import "./App.css";
@@ -141,8 +142,8 @@ function App() {
         <div className="domain-selector">
           <label>
             Select Target Domain:{" "}
-            <select 
-              value={domain} 
+            <select
+              value={domain}
               onChange={handleDomainChange}
               className="domain-dropdown"
             >
@@ -205,8 +206,8 @@ function App() {
               Domain Match: <span className="percentage-value">{matchPercent}%</span>
             </div>
             <div className="progress-bar">
-              <div 
-                className="progress-fill" 
+              <div
+                className="progress-fill"
                 style={{ width: `${matchPercent}%` }}
               ></div>
             </div>
