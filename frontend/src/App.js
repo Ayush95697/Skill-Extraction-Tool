@@ -50,11 +50,11 @@ function App() {
 
     try {
       await axios.post(
-        "https://YOUR-BACKEND-RENDER-URL.onrender.com/extract-skills"
+  "https://YOUR-BACKEND-RENDER-URL.onrender.com/extract-skills",
+  formData,
+  { headers: { "Content-Type": "multipart/form-data" } }
+);
 
-        formData,
-        { headers: { "Content-Type": "multipart/form-data" } }
-      );
       setFileUploaded(true);
     } catch (err) {
       alert("Error uploading file!");
