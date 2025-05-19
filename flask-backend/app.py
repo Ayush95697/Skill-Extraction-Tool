@@ -65,14 +65,29 @@ def extract_text_from_pdf(file_stream):
 def extract_links(text):
     linkedin = None
     github = None
-    # Find LinkedIn and GitHub links using regex
-    linkedin_match = re.search(r'(https?://(www\.)?linkedin\.com/[^\s,;]*)', text, re.IGNORECASE)
-    github_match = re.search(r'(https?://(www\.)?github\.com/[^\s,;]*)', text, re.IGNORECASE)
+    linkedin_match = re.search(r'https?://(?:[a-z]+\.)?linkedin\.com/[^\s,;)\]]+', text, re.IGNORECASE)
+    github_match = re.search(r'https?://(?:[a-z]+\.)?github\.com/[^\s,;)\]]+', text, re.IGNORECASE)
     if linkedin_match:
-        linkedin = linkedin_match.group(1)
+        linkedin = linkedin_match.group(0).strip().rstrip('.,;)')
     if github_match:
-        github = github_match.group(1)
+        github = github_match.group(0).strip().rstrip('.,;)')
     return linkedin, github
+
+def extract_email(text):
+    match = re.search(r'[\w\.-]+@[\w\.-]+\.\w+', text)
+    return match.group(0) if match else None
+
+def extract_phone(text):
+    match = re.search(r'(\+?\d{1,3}[-.\s]?)?(\(?\d{3,5}\)?[-.\s]?)?\d{3,5}[-.\s]?\d{4,10}', text)
+    return match.group(0) if match else None
+
+def extract_name(text):
+    lines = text.split('\n')
+    for line in lines:
+        words = line.strip().split()
+        if 1 < len(words) < 4 and all(w[0].isupper() for w in words if w):
+            return line.strip()
+    return None
 
 def extract_skills(text, domain=None):
     text_lower = text.lower()
@@ -93,7 +108,6 @@ def extract_skills(text, domain=None):
         if total > 0:
             match_percentage = int(100 * len(found_skills) / total)
         missing_skills = [skill.title() for skill in DOMAIN_SKILLS[domain] if skill.title() not in found_skills]
-    # Categorize found skills
     categorized = defaultdict(list)
     for category, skills in SKILL_CATEGORIES.items():
         for skill in skills:
@@ -115,6 +129,9 @@ def extract_skills_route():
         return jsonify({"error": "Unsupported file type"}), 400
 
     linkedin, github = extract_links(text)
+    email = extract_email(text)
+    phone = extract_phone(text)
+    name = extract_name(text)
     skills, match_percentage, missing_skills, categorized = extract_skills(text, domain)
     return jsonify({
         "skills": skills,
@@ -122,7 +139,10 @@ def extract_skills_route():
         "missing_skills": missing_skills,
         "categorized_skills": categorized,
         "linkedin": linkedin,
-        "github": github
+        "github": github,
+        "email": email,
+        "phone": phone,
+        "name": name
     })
 
 if __name__ == "__main__":
